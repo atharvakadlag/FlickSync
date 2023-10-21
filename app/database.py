@@ -1,19 +1,18 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from contextlib import contextmanager
+from sqlmodel import create_engine
+from sqlmodel import Session as SQLModelSession
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///dev.db"
+# Define the SQLite database URL (in-memory or file-based)
+DATABASE_URL = "sqlite:///dev.db"  # For a file-based database named dev.db
 
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-Base = declarative_base()
+# Create a SQLAlchemy database engine
+engine = create_engine(DATABASE_URL)
 
 
-def get_db():
-    db = SessionLocal()
+@contextmanager
+def Session():
+    session = SQLModelSession(engine)
     try:
-        yield db
+        yield session
     finally:
-        db.close()
+        session.close()
