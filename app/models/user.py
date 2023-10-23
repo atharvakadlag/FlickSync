@@ -23,8 +23,7 @@ class UserCreate(UserBase):
             full_name=self.full_name,
             date_of_birth=self.date_of_birth,
             gender=self.gender,
-            profile_picture=self.profile_picture,
-            interests=self.interests,
+            profile_picture=self.profile_picture
         )
 
 

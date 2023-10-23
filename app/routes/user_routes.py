@@ -11,12 +11,17 @@ def create_user(user: user_model.UserCreate, db: Session = Depends(Session)):
     # Check if the username or email is already taken
     with Session() as db:
         existing_user = db.query(user_model.User).filter(
-            (user_model.User.username == user.username) | (user_model.User.email == user.email)
+            (user_model.User.username == user.username) |
+            (user_model.User.email == user.email)
         ).first()
         if existing_user:
-            raise HTTPException(status_code=400, detail="Username or email already registered")
+            raise HTTPException(
+                status_code=400,
+                detail="Username or email already registered"
+            )
 
         # Hash the password and create the user
+        # todo: move to the UserCreate class
         hashed_password = hash_password(user.password)
         db_user = user_model.User(**user.dict(), hashed_password=hashed_password)
         db.add(db_user)
@@ -35,7 +40,11 @@ def read_user(user_id: int, db: Session = Depends(Session)):
 
 
 @router.put("/users/{user_id}", response_model=user_model.User)
-def update_user(user_id: int, user_update: user_model.UserBase, db: Session = Depends(Session)):
+def update_user(
+    user_id: int,
+    user_update: user_model.UserBase,
+    db: Session = Depends(Session)
+):
     with Session() as db:
         user = db.query(user_model.User).filter(user_model.User.id == user_id).first()
         if user is None:

@@ -1,7 +1,9 @@
-from pydantic import BaseModel
+from typing import Optional
+
+from sqlmodel import Field, SQLModel
 
 
-class MovieBase(BaseModel):
+class MovieBase(SQLModel):
     title: str
     description: str
     genre: str
@@ -15,11 +17,13 @@ class MovieBase(BaseModel):
 
 
 class MovieCreate(MovieBase):
-    pass
+
+    def to_movie_model(self):
+        return Movie(**self.dict())
 
 
-class Movie(MovieBase):
-    id: int
+class Movie(MovieBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
 
     class Config:
         from_attributes = True
